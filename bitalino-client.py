@@ -2,7 +2,7 @@ import json, requests, bitalino
 import numpy as np
 import atexit
 
-post_route = "127.0.0.1:3000"
+post_route = "http://127.0.0.1:3000"
 
 # array_labels = [
 # 	'SeqN',
@@ -40,7 +40,7 @@ def closedevice():
 atexit.register(closedevice)
 
 device = bitalino.BITalino()
-device.open(macAddress="/dev/tty.bitalino-DevB", SamplingRate=1000)
+device.open(macAddress="/dev/tty.bitalino-DevB", SamplingRate=100)
 print 'opened device'
 device.start()
 print 'started acquisiton'

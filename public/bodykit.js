@@ -3,29 +3,21 @@ var graphs = {};
 
 window.onload = function() {
 
-    var connection = new WebSocket('ws://localhost:3000');
+    var connection = io.connect()
 
-    connection.onopen = function() {
-        console.log('websocket connection opened for connection', connection);
-    };
-
-    connection.onerror = function(error) {
-        console.log('websocket error', error, 'for connection', connection);
-    };
-
-    connection.onmessage = function(e) {
-        console.log('websocket message', e, 'for connection', connection);
-
-        update_client_data(e.data);
+    connection.on('bitalino_data', function(e) {
+        update_client_data(JSON.parse(e));
+	console.log('data', JSON.parse(e));
 
         _.forEach(client_data, function(d, channel) {
             if (!graph_already_created(channel)) {
+		console.log('creating a graph for channel', channel);
                 graphs[channel] = create_graph(channel);
             }
-            graphs[channel].update(); 
+	    graphs[channel].update();
         });
-    };
-};
+    })
+}
 
 function get_fake_server_data() {
     var data = {
@@ -48,6 +40,7 @@ function update_client_data(server_data) {
             client_data[channel] = [];
         }
         _.forEach(d, function(val, i) {
+            //console.log('x', client_data[channel].length, 'y', val);
             client_data[channel].push({
                 x: client_data[channel].length,
                 y: val
