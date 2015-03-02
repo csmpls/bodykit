@@ -4,15 +4,7 @@ import atexit
 
 post_route = "http://127.0.0.1:3000"
 
-# array_labels = [
-# 	'SeqN',
-# 	'D0',
-# 	'D1',
-# 	'D2',
-# 	'D3',
-# 	'A0',
-# 	'A6'
-# ]
+sensors = {5:'emg', 6:'eda', 7:'ecg', 8:'accel', 9:'light'}
 
 class NumPyArangeEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -25,8 +17,8 @@ def labeled_json_array(tuple):
 
 def jsonify_arrays(data): 
 	json_data = {}
-	for i in range(10):
-		json_data[i] = data[i]
+	for i in range(5,10):
+		json_data[sensors[i]] = data[i]
 	return json.dumps(json_data, cls=NumPyArangeEncoder)
 
 def post_to_server(json):
@@ -48,6 +40,6 @@ print 'started acquisiton'
 reads = 0
 while True:
 	print "reading", reads
-	data = device.read(1000)
+	data = device.read(100)
 	post_to_server(jsonify_arrays(data))
 	reads+=1
